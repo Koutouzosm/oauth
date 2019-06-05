@@ -11,7 +11,7 @@ const authCheck = (req, res, next) => {
 };
 
 router.get('/', authCheck,(req, res) => {
-    res.send('Your are logged in, Here i will take you to your profile-' + req.user.displayName);
+    res.render('profile', {user: req.user});
 })
 
 module.exports = router;

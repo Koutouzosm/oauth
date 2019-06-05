@@ -13,18 +13,25 @@
     <nav>
         <ul>
                 <% if (user) { %>
-                <li><a href="/auth/logout">Log out</a></li>
-                <% } else { %>
-                <li><a href="/auth/login">Login</a></li>
-                <% } %>
-                <li><a href="/">Homepage</a></li>
-                <li><a href="/profile">Profile</a></li>
+                    <li><a href="/auth/logout">Log out</a></li>
+                    <% } else { %>
+                    <li><a href="/auth/login">Login</a></li>
+                    <% } %>
+                    <li><a href="/">Homepage</a></li>
+
+                    <li><a href="/profile">Profile</a></li>
         </ul>
     </nav>
     <header>
-        <h1>Oauth Template</h1>
-        <h2>Homepage</h2>
+        <h1>Welcome to your profile, <%= user.displayName %></h1>
     </header>
+    <main>
+        <img src="<%= user.thumbnail %>" />
+        <p>
+            Extra information about you. 
+        </p>
+
+    </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>

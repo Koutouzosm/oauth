@@ -21,9 +21,11 @@ passport.use(
     clientID:keys.google.clientID,
     clientSecret:keys.google.clientSecret
  }, (accessToken, refreshToken, profile, done) => {
+   console.log(profile)
     // Chekc if user already exists in db
 
     User.findOne({googleid: profile.id}).then((currentUser) => {
+       
       if(currentUser){
          // User already exists
          console.log("user is: ", currentUser)
@@ -33,6 +35,7 @@ passport.use(
          new User({
             displayName: profile.displayName,
             googleid: profile.id,
+            thumbnail: profile._json.picture
          }).save().then((newUser) => {
             console.log('new user created:' + newUser);
             done(null, newUser);
