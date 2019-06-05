@@ -1,6 +1,9 @@
 const express = require('express')
+const graphqlHTTP = require("express-graphql");
+const cors = require('cors');
 const authRoutes = require('./routes/auth-routes');
 const passportSetup = require('./config/passport-setup');
+const schema = require('./schema')
 const mongoose = require('mongoose');
 const app = express();
 
@@ -12,6 +15,11 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 
 // connection to mongoDB
+
+app.use('/graphql', graphqlHTTP({
+    schema, 
+    graphiql: true
+}));
 
 app.use (express.urlencoded({ extended: true }));
 app.use(express.json());
