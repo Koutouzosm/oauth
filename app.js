@@ -1,8 +1,12 @@
 const express = require('express')
 const authRoutes = require('./routes/auth-routes');
 const passportSetup = require('./config/passport-setup');
+const cookieSession = require('cookie-session');
 const mongoose = require('mongoose');
+const keys = require('./config/keys');
 const app = express();
+const passport = require('passport');
+const profileRoutes = require('./routes/profile-routes');
 
 const PORT = process.env.PORT || 3000;
 
@@ -10,6 +14,17 @@ const PORT = process.env.PORT || 3000;
 
 // set up veiw engine
 app.set('view engine', 'ejs');
+
+app.use(cookieSession( {
+    maxAge: 24*60*60*1000,
+    keys:[keys.session.cookieKey]
+}));
+
+// initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 
 // connection to mongoDB
 
@@ -24,6 +39,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/oauth-test-db',
 
 // set up routes
 app.use('/auth', authRoutes);
+app.use('/profile', profileRoutes);
+
 
 
 //  create our home route
