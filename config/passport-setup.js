@@ -15,8 +15,8 @@ passport.use(
    console.log("passport callback function fired");
    console.log(profile);
    new User({
-      username: profile.name,
-      googleID: profile.id
+      displayName: profile.displayName,
+      googleID: profile.id,
    }).save().then((newUser) => {
       console.log('new user created:' + newUser);
    })
