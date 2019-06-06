@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const movieSchema = new Schema({
     movie: {
-        type: String,
+        type: [String],
         required: false
     },
     googleid: {
