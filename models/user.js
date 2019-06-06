@@ -9,6 +9,7 @@ const userSchema = new Schema({
     },
     googleid: {
         type: String,
+        required: true
     },
     gender: {
         type: String,
@@ -16,10 +17,6 @@ const userSchema = new Schema({
     },
     age: {
         type: Number,
-        required: false
-    },
-    movies: {
-        type: [String],
         required: false
     }
 });

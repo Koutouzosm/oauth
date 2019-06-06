@@ -2,13 +2,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const movieSchema = new Schema({
-    movies: {
+    movie: {
         type: String,
         required: false
     },
     googleid: {
         type: String,
         required: true
+    },
+    unique: {
+      type: String,
+      required: true
     }
 });
 

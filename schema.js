@@ -1,6 +1,7 @@
 const graphql = require('graphql');
 const User = require('./models/user')
 const Movie = require('./models/movies')
+const fetch = require('node-fetch');
 
 
 const {
@@ -24,9 +25,9 @@ const UserType = new GraphQLObjectType({
     age: { type: GraphQLInt },
     gender: { type: GraphQLString },
     movies: { 
-      type: MovieType,
+      type: GraphQLList(MovieType),
       resolve(parent, args){
-        return Movie.findById({unique: parent._id})
+        return Movie.find(parent.unique)
       }
      }
     
@@ -38,7 +39,8 @@ const MovieType = new GraphQLObjectType({
   name: "Movie",
   fields: () => ({
     movie: { type: GraphQLString },
-    unique: { type: GraphQLString }
+    unique: { type: GraphQLString },
+    googleid: { type: GraphQLString }
   })
 })
 
@@ -54,9 +56,9 @@ const RootQuery = new GraphQLObjectType({
     },
     movie: {
       type: MovieType,
-      args: {unique: { type:GraphQLString }},
+      args: {_id: { type:GraphQLID }},
       resolve(parent, args){
-        return Movie.filter({ unique: args.unique })
+        return Movie.findById({ _id: args._id })
       }
     }
   }
