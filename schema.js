@@ -1,6 +1,7 @@
 const graphql = require('graphql');
 const User = require('./models/user')
-// const _ = require('lodash');
+const Movie = require('./models/movies')
+
 
 const {
   GraphQLObjectType,
@@ -9,105 +10,58 @@ const {
   GraphQLID,
   GraphQLInt,
   GraphQLList,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLEnumType
 } = graphql;
-//book
+
 const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
+    // _id: { type: GraphQLID},
+    _id: { type: GraphQLID },
     displayName: { type: GraphQLString },
-    googleid: { type: GraphQLString },
+    googleid: { type: GraphQLID },
     age: { type: GraphQLInt },
     gender: { type: GraphQLString },
-    movies: {
+    movies: { 
       type: MovieType,
-      resolve(parent, args) {
-        return Movie.findById(parent._id);
+      resolve(parent, args){
+        return Movie.findById({unique: parent._id})
       }
-    }
-  })
+     }
+    
+    })
 });
-//author
+
+//above the join occurs. mongos unique id needs to be passed from the user collection to the movie collection as a unique key or identifier. the movietype can then be passed in as GraphQLList(MovieType) and resolved on it's on so that the movies are listed as a sub object of the larger user object. Refer to netninja graphql video 12++. 
 const MovieType = new GraphQLObjectType({
-  name: 'Movie',
+  name: "Movie",
   fields: () => ({
-    title: { type: GraphQLString },
-    users: {
-      type: new GraphQLList(MovieType),
-      resolve(parent, args) {
-        return User.find({ _id: parent.movieId });
-      }
-    }
+    movie: { type: GraphQLString },
+    unique: { type: GraphQLString }
   })
-});
+})
 
 const RootQuery = new GraphQLObjectType({
-  name: 'RootQueryType',
+  name:"RootQueryType",
   fields: {
-    movie: {
-      type: MovieType,
-      args: { _id: { type: GraphQLID } },
-      resolve(parent, args) {
-        return movies.find({});
-      }
-    },
     user: {
       type: UserType,
-      args: { _id: { type: GraphQLID } },
-      resolve(parent, args) {
-        return User.findById(args._id);
+      args: { _id: { type: GraphQLID }},
+      resolve(parent, args){
+        return User.findById({ _id: args._id})
       }
     },
-    movies: {
-      type: new GraphQLList(MovieType),
-      resolve(parent, args) {
-        return Movies.find({});
-      }
-    },
-    Users: {
-      type: new GraphQLList(UserType),
-      resolve(parent, args) {
-        return Users.find({});
-      }
-    }
-  }
-});
-
-const Mutation = new GraphQLObjectType({
-  name: 'Mutation',
-  fields: {
-    addUser: {
-      type: UserType,
-      args: {
-        _id: { type: GraphQLID },
-        name: { type: GraphQLString },
-        age: { type: GraphQLInt }
-      },
-      resolve(parent, args) {
-        let user = new User({
-          _id: { type: GraphQLID },
-          gender: args.gender,
-          age: args.age
-        });
-        return user.save();
-      }
-    },
-    addMovies: {
+    movie: {
       type: MovieType,
-      args: {
-        title: { type: new GraphQLNonNull(GraphQLString) }
-      },
-      resolve(parent, args) {
-        let movie = new Movie({
-          title: args.title
-        });
-        return movie.save();
+      args: {unique: { type:GraphQLString }},
+      resolve(parent, args){
+        return Movie.filter({ unique: args.unique })
       }
     }
   }
-});
+})
 
-module.exports = new GraphQLSchema({
-  query: RootQuery,
-  mutation: Mutation
-});
+module.exports= new GraphQLSchema({
+  query: RootQuery
+})
